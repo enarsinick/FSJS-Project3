@@ -5,11 +5,35 @@ const jobField = document.getElementById('other-title');
 const colourSelect = document.getElementById('color'); 
 const designSelect = document.getElementById('design');
 const checkboxes = document.querySelectorAll('.activities input');
+const paymentSelect = document.getElementById('payment');
+const creditCardDiv = document.getElementById('credit-card');
+const paypalDiv = document.getElementById('paypal');
+const bitcoinDiv = document.getElementById('bitcoin');
 let totalCostHeader = document.createElement('h3');
 totalCost = 0;
 
-// Function that shows certain option within the t-shirt colour 
-// option drop down menu, depending on the data passed to it
+
+// Simple function to hide or show payment option based on value passed to it 
+const showHidePayOptions = option => {
+    if (option === 'paypal') {
+        creditCardDiv.style.display = 'none';
+        bitcoinDiv.style.display = 'none';
+        paypalDiv.style.display = 'initial';
+    } else if (option === 'bitcoin') {
+        creditCardDiv.style.display = 'none';
+        paypalDiv.style.display = 'none';
+        bitcoinDiv.style.display = 'initial';
+    } else {
+        bitcoinDiv.style.display = 'none';
+        paypalDiv.style.display = 'none';
+        creditCardDiv.style.display = 'initial';
+    }
+}
+
+/* 
+    Function that shows certain option within the t-shirt colour 
+    option drop down menu, depending on the data passed to it
+*/
 const makeColourOptionsHidden = (options, num, length) => {
     for (let i = num; i < length; i++) {
         options[i].hidden = true;
@@ -35,10 +59,16 @@ window.addEventListener("load", function(){
     // Appending total activities cost to the page on load
     totalCostHeader.innerHTML = `Total: $${totalCost}`;
     document.querySelector('.activities').append(totalCostHeader);
+
+    // Make the payment select drop down select method hidden
+    paymentSelect.firstElementChild.hidden = true;
+    paymentSelect.firstElementChild.nextElementSibling.selected = true;
+    paypalDiv.style.display = 'none';
+    bitcoinDiv.style.display = 'none';
 });
 
 // Listens out for changes on the t-shirt info drop down
-designSelect.addEventListener('change', (event) => {
+designSelect.addEventListener('change', event => {
     let selected = event.target.value;
 
     // Check certain value of selected and hide/show certain options in colour drop down
@@ -58,7 +88,7 @@ designSelect.addEventListener('change', (event) => {
 });
 
 // Listen out for changes on the activities checkboxes
-document.querySelector('.activities').addEventListener('change', (e) => {
+document.querySelector('.activities').addEventListener('change', e => {
     // Store the clicked checkbox, it's cost and day/time value
     let clicked = e.target;
     let clickedCost = clicked.getAttribute('data-cost');
@@ -88,4 +118,13 @@ document.querySelector('.activities').addEventListener('change', (e) => {
             }
         }
     }
+});
+
+/* 
+    listen out for changes on the payment info select 
+    and change payment options based on that
+*/ 
+paymentSelect.addEventListener('change', e => {
+    let paymentSelected = e.target.value;
+    showHidePayOptions(paymentSelected);
 });
