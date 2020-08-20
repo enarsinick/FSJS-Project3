@@ -1,16 +1,99 @@
+/* 
+
+Split up the payment field validators into seperate functions, so I can 
+return true or false, instead of trying to do it all in one function
+
+*/
+
+
+
 
 // Global variables
 const nameField = document.getElementById('name');
+const emailField = document.getElementById('mail');
 const jobField = document.getElementById('other-title');
 const colourSelect = document.getElementById('color'); 
 const designSelect = document.getElementById('design');
+const activitiesContainer = document.querySelector('.activities');
 const checkboxes = document.querySelectorAll('.activities input');
 const paymentSelect = document.getElementById('payment');
+const ccField = document.getElementById('cc-num');
+const zipField = document.getElementById('zip');
+const cvvField = document.getElementById('cvv');
 const creditCardDiv = document.getElementById('credit-card');
 const paypalDiv = document.getElementById('paypal');
 const bitcoinDiv = document.getElementById('bitcoin');
+const submitBtn = document.querySelector('button');
 let totalCostHeader = document.createElement('h3');
 totalCost = 0;
+
+
+const nameValidator = () => {
+    let nameValue = nameField.value;
+
+    if (nameValue.length > 0) {
+        nameField.style.borderColor = 'rgb(111, 157, 220)';
+        return true;
+    } else {
+        nameField.style.borderColor = 'red';
+        return false;
+    }
+}
+
+const emailValidator = () => {
+    let emailValue = emailField.value;
+    let indexOfAt = emailValue.indexOf('@');
+    let indexOfDot = emailValue.lastIndexOf('.');
+
+    if (indexOfAt > 1 && indexOfDot > indexOfAt + 1) {
+        emailField.style.borderColor = 'rgb(111, 157, 220)';
+        return true;
+      } else {
+        emailField.style.borderColor = 'red';
+        return false;
+      }
+
+}
+
+const activityValidator = () => {
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].checked) {
+            return true;
+        }
+    }
+
+    activitiesContainer.style.borderColor = 'red';
+    activitiesContainer.firstElementChild.style.color = 'red';
+    return false;
+}
+
+const paymentValidtor = () => {
+    let selectedPayment = paymentSelect.value;
+    
+    if (selectedPayment === 'credit card') {
+        let ccNum = ccField.value;
+        let zip = zipField.value;
+        let cvv = cvvField.value;
+
+        if (ccNum.length > 12 && ccNum.length < 17) {
+            ccField.style.borderColor = 'rgb(111, 157, 220)';
+        } else {
+            ccField.style.borderColor = 'red';
+        };
+
+        if (zip.length === 5) {
+            zipField.style.borderColor = 'rgb(111, 157, 220)';
+        } else {
+            zipField.style.borderColor = 'red';
+        }
+
+        if (cvv.length === 3) {
+            cvvField.style.borderColor = 'rgb(111, 157, 220)';
+        } else {
+            cvvField.style.borderColor = 'red';
+        }
+    }
+}
 
 
 // Simple function to hide or show payment option based on value passed to it 
@@ -18,15 +101,15 @@ const showHidePayOptions = option => {
     if (option === 'paypal') {
         creditCardDiv.style.display = 'none';
         bitcoinDiv.style.display = 'none';
-        paypalDiv.style.display = 'initial';
+        paypalDiv.style.display = 'block';
     } else if (option === 'bitcoin') {
         creditCardDiv.style.display = 'none';
         paypalDiv.style.display = 'none';
-        bitcoinDiv.style.display = 'initial';
+        bitcoinDiv.style.display = 'block';
     } else {
         bitcoinDiv.style.display = 'none';
         paypalDiv.style.display = 'none';
-        creditCardDiv.style.display = 'initial';
+        creditCardDiv.style.display = 'block';
     }
 }
 
@@ -128,3 +211,37 @@ paymentSelect.addEventListener('change', e => {
     let paymentSelected = e.target.value;
     showHidePayOptions(paymentSelected);
 });
+
+submitBtn.addEventListener('click', e => {
+    e.preventDefault();
+    nameValidator();
+    emailValidator();
+    activityValidator();
+    paymentValidtor();
+});
+
+
+// /* Real time validation */
+// // To add real time validation, use the .addEventListener() method on the form elements/sections
+// // Use events like `keyup`, `blur` and/or `mouseout`
+// // As the callback, use the validation functions above, but remember, 
+// // Don't use parens when passing a reference to a function as a callback  
+
+
+// /* Submit listener on the form element */
+// form.addEventListener('submit', (e) => {
+//   // 1. Create an if statement
+//     // If `(!nameValidator())` call `e.preventDefault();` 
+//       // And log out a message saying this validator prevented submission
+  
+//   // 2. Repeat the above step for the rest of your validation functions
+
+//   // And feel free to comment out or delete any log statements from the validation functions above
+//   if(!nameValidator()) {e.preventDefault(); console.log('There is no name');}
+//   if(!emailValidator()) {e.preventDefault(); console.log('There is no email');}
+//   if(!frameworkValidator()) {e.preventDefault(); console.log('There is no framework');}
+//   if(!languageValidator()) {e.preventDefault(); console.log('There is no language');}
+
+//   // Submit handler test log - Feel free to delete this or comment it out
+//   console.log('Submit handler is functional!');
+// });
