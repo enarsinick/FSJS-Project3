@@ -1,6 +1,7 @@
 // Global variables
 const nameField = document.getElementById('name');
 const emailField = document.getElementById('mail');
+const jobSelect = document.getElementById('title');
 const jobField = document.getElementById('other-title');
 const colourSelect = document.getElementById('color'); 
 const designSelect = document.getElementById('design');
@@ -63,30 +64,42 @@ const activityValidator = () => {
 // Checks to see if the payment field is valid or not
 const paymentValidtor = () => {
     let selectedPayment = paymentSelect.value;
-    
+    let isValid = true;
+
     if (selectedPayment === 'credit card') {
         let ccNum = ccField.value;
         let zip = zipField.value;
         let cvv = cvvField.value;
 
-        // Is the CC field over 12 digits and under 17?
-        if (ccNum.length > 12 && ccNum.length < 17) {
-            creditCardDiv.firstElementChild.firstElementChild.innerHTML = 'Card Number:'
-            creditCardDiv.firstElementChild.firstElementChild.style.color = 'black';
-            ccField.style.borderColor = 'rgb(111, 157, 220)';
-        } else if (ccNum.length < 12 && ccNum.length !== 0) {
-            creditCardDiv.firstElementChild.firstElementChild.innerHTML = 'Your credit card number is too short'
-            creditCardDiv.firstElementChild.firstElementChild.style.color = 'red';
-            console.log('The credit card number is too short');
-            ccField.style.borderColor = 'red';
-        } else if (ccNum.length > 17) {
-            creditCardDiv.firstElementChild.firstElementChild.innerHTML = 'Your credit card number is too long'
-            creditCardDiv.firstElementChild.firstElementChild.style.color = 'red';
-            ccField.style.borderColor = 'red';
+        // Is the CC field only numbers?
+        if (ccNum.match(/^[0-9]+$/)) {
+            // Is the CC field over 12 digits and under 17?
+            if (ccNum.length > 12 && ccNum.length < 17) {
+                creditCardDiv.firstElementChild.firstElementChild.innerHTML = 'Card Number:'
+                creditCardDiv.firstElementChild.firstElementChild.style.color = 'black';
+                ccField.style.borderColor = 'rgb(111, 157, 220)';
+            } else if (ccNum.length < 12 && ccNum.length !== 0) {
+                creditCardDiv.firstElementChild.firstElementChild.innerHTML = 'Your credit card number is too short'
+                creditCardDiv.firstElementChild.firstElementChild.style.color = 'red';
+                console.log('The credit card number is too short');
+                ccField.style.borderColor = 'red';
+                isValid = false;
+            } else if (ccNum.length > 17) {
+                creditCardDiv.firstElementChild.firstElementChild.innerHTML = 'Your credit card number is too long'
+                creditCardDiv.firstElementChild.firstElementChild.style.color = 'red';
+                ccField.style.borderColor = 'red';
+                isValid = false;
+            } else {
+                creditCardDiv.firstElementChild.firstElementChild.innerHTML = 'Please enter a credit card number'
+                creditCardDiv.firstElementChild.firstElementChild.style.color = 'red';
+                ccField.style.borderColor = 'red';
+                isValid = false;
+            }     
         } else {
-            creditCardDiv.firstElementChild.firstElementChild.innerHTML = 'Please enter a credit card number'
+            creditCardDiv.firstElementChild.firstElementChild.innerHTML = 'Please enter a valid credit card number!'
             creditCardDiv.firstElementChild.firstElementChild.style.color = 'red';
             ccField.style.borderColor = 'red';
+            isValid = false;
         }
 
         // Is the ZIP code 5 digits long
@@ -94,6 +107,7 @@ const paymentValidtor = () => {
             zipField.style.borderColor = 'rgb(111, 157, 220)';
         } else {
             zipField.style.borderColor = 'red';
+            isValid = false;
         }
 
         // Is the CVV 3 digits long
@@ -101,8 +115,10 @@ const paymentValidtor = () => {
             cvvField.style.borderColor = 'rgb(111, 157, 220)';
         } else {
             cvvField.style.borderColor = 'red';
+            isValid = false;
         }
     }
+    return isValid;
 }
 
 
@@ -169,6 +185,15 @@ window.addEventListener("load", function(){
     paypalDiv.style.display = 'none';
     bitcoinDiv.style.display = 'none';
 });
+
+// Display the 'other' job field when the other value is selected from drop down
+jobSelect.addEventListener('change', (e) => {
+    if(e.target.value === 'other') {
+        hideOrShowElement(jobField.parentNode, true);
+    } else {
+        hideOrShowElement(jobField.parentNode, false);
+    }
+})
 
 // Listens out for changes on the t-shirt info drop down
 designSelect.addEventListener('change', event => {
